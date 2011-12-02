@@ -20,7 +20,7 @@ if ($uri == '/' || $uri == '') {
     $content = '<h1>Welcome to PHP Santa</h1>';
     $content .= sprintf('<a href="/letters">Read the letters</a>');
     if ($name = $request->query->get('name')) {
-        $content .= sprintf('<p>Oh, and hello %s!</p>', $_GET['name']);
+        $content .= sprintf('<p>Oh, and hello %s!</p>', $name);
     }
 
     $response = new Response($content);
