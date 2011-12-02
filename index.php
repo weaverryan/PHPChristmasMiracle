@@ -1,42 +1,53 @@
 <?php
 require 'bootstrap.php';
 
-$pimple = new Pimple();
-
-$pimple['connection_string'] = 'sqlite:'.__DIR__.'/data/database.sqlite';
-
-// setup our database connection
-$pimple['connection'] = function(Pimple $pimple) {
-    return new PDO($pimple['connection_string']);
-};
-
-
-// create a request object to help us
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use lithium\net\http\Router;
 use lithium\action\Request as Li3Request;
 
-$request = Request::createFromGlobals();
+$pimple = new Pimple();
 
-// create a lithium request from a Symfony request, since the interfaces aren't compatible
-$li3Request = new Li3Request();
-$li3Request->url = $request->getPathInfo();
+// configuration
+$pimple['connection_string'] = 'sqlite:'.__DIR__.'/data/database.sqlite';
 
-// create a router, build the routes, and then execute it
-$router = new \lithium\net\http\Router();
-$router->connect('/letters', array('controller' => 'letters'));
-$router->connect('/{:name}', array('controller' => 'homepage', 'name' => null));
-$router->parse($li3Request);
+// Service setup
+$pimple['connection'] = $pimple->share(function(Pimple $pimple) {
+    return new PDO($pimple['connection_string']);
+});
+
+$pimple['request'] = $pimple->share(function() {
+    return Request::createFromGlobals();
+});
+
+$pimple['li3_request'] = $pimple->share(function(Pimple $pimple) {
+    $li3Request = new Li3Request();
+    $li3Request->url = $pimple['request']->getPathInfo();
+
+    return $li3Request;
+});
+
+$pimple['router'] = $pimple->share(function() {
+    $router = new Router();
+
+    // add some routes
+    $router->connect('/letters', array('controller' => 'letters'));
+    $router->connect('/{:name}', array('controller' => 'homepage', 'name' => null));
+
+    return $router;
+});
+
+// execute our routing
+$result = $pimple['router']->parse($pimple['li3_request']);
 
 // merge the matched attributes back into Symfony's request
-$request->attributes->add($li3Request->params);
+$pimple['request']->attributes->add($pimple['li3_request']->params);
 
 // get the "controller" out, or default to error404
-$controller = $request->attributes->get('controller', 'error404');
+$controller = $pimple['request']->attributes->get('controller', 'error404');
 
 // execute the controller and get the response
-$response = call_user_func_array($controller, array($request, $pimple));
+$response = call_user_func_array($controller, array($pimple['request'], $pimple));
 if (!$response instanceof Response) {
     throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
 }
