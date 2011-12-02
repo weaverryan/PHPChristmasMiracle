@@ -1,12 +1,15 @@
 <?php
 require 'bootstrap.php';
 
-try {
-    $dbPath = __DIR__.'/data/database.sqlite';
-    $dbh = new PDO('sqlite:'.$dbPath);
-} catch(PDOException $e) {
-    die('Panic! '.$e->getMessage());
-}
+$pimple = new Pimple();
+
+$pimple['connection_string'] = 'sqlite:'.__DIR__.'/data/database.sqlite';
+
+// setup our database connection
+$pimple['connection'] = function(Pimple $pimple) {
+    return new PDO($pimple['connection_string']);
+};
+
 
 // create a request object to help us
 use Symfony\Component\HttpFoundation\Request;
@@ -33,7 +36,7 @@ $request->attributes->add($li3Request->params);
 $controller = $request->attributes->get('controller', 'error404');
 
 // execute the controller and get the response
-$response = call_user_func_array($controller, array($request));
+$response = call_user_func_array($controller, array($request, $pimple));
 if (!$response instanceof Response) {
     throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
 }
@@ -54,9 +57,9 @@ function homepage(Request $request) {
     return new Response($content);
 }
 
-function letters(Request $request)
+function letters(Request $request, Pimple $pimple)
 {
-    global $dbh;
+    $dbh = $pimple['connection'];
 
     $sql = 'SELECT * FROM php_santa_letters';
     $content = '<h1>Read the letters to PHP Santa</h1>';

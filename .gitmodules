@@ -7,3 +7,6 @@
 [submodule "vendors/lithium"]
 	path = vendors/lithium
 	url = git://github.com/UnionOfRAD/lithium.git
+[submodule "vendors/Pimple"]
+	path = vendors/Pimple
+	url = git://github.com/fabpot/Pimple.git

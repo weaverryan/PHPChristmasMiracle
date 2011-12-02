@@ -9,3 +9,6 @@ $loader->registerNamespace('Symfony', __DIR__.'/vendors');
 $loader->registerNamespace('lithium', __DIR__.'/vendors');
 
 $loader->register();
+
+// manually require the Pimple file
+require __DIR__.'/vendors/Pimple/lib/Pimple.php';
