@@ -1,0 +1,6 @@
+[submodule "vendors/Symfony/Component/HttpFoundation"]
+	path = vendors/Symfony/Component/HttpFoundation
+	url = git://github.com/symfony/HttpFoundation.git
+[submodule "vendors/Symfony/Component/ClassLoader"]
+	path = vendors/Symfony/Component/ClassLoader
+	url = https://github.com/symfony/ClassLoader.git

@@ -1,4 +1,5 @@
 <?php
+require 'bootstrap.php';
 
 try {
     $dbPath = __DIR__.'/data/database.sqlite';
@@ -7,10 +8,11 @@ try {
     die('Panic! '.$e->getMessage());
 }
 
-$uri = $_SERVER['REQUEST_URI'];
-if ($pos = strpos($uri, '?')) {
-    $uri = substr($uri, 0, $pos);
-}
+// create a request object to help us
+use Symfony\Component\HttpFoundation\Request;
+$request = Request::createFromGlobals();
+
+$uri = $request->getPathInfo();
 
 if ($uri == '/' || $uri == '') {
 
