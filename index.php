@@ -6,28 +6,28 @@ use Symfony\Component\HttpFoundation\Response;
 use lithium\net\http\Router;
 use lithium\action\Request as Li3Request;
 
-$pimple = new Pimple();
+$c = new Pimple();
 
 // configuration
-$pimple['connection_string'] = 'sqlite:'.__DIR__.'/data/database.sqlite';
+$c['connection_string'] = 'sqlite:'.__DIR__.'/data/database.sqlite';
 
 // Service setup
-$pimple['connection'] = $pimple->share(function(Pimple $pimple) {
-    return new PDO($pimple['connection_string']);
+$c['connection'] = $c->share(function(Pimple $c) {
+    return new PDO($c['connection_string']);
 });
 
-$pimple['request'] = $pimple->share(function() {
+$c['request'] = $c->share(function() {
     return Request::createFromGlobals();
 });
 
-$pimple['li3_request'] = $pimple->share(function(Pimple $pimple) {
+$c['li3_request'] = $c->share(function(Pimple $c) {
     $li3Request = new Li3Request();
-    $li3Request->url = $pimple['request']->getPathInfo();
+    $li3Request->url = $c['request']->getPathInfo();
 
     return $li3Request;
 });
 
-$pimple['router'] = $pimple->share(function() {
+$c['router'] = $c->share(function() {
     $router = new Router();
 
     // add some routes
@@ -38,16 +38,16 @@ $pimple['router'] = $pimple->share(function() {
 });
 
 // execute our routing
-$result = $pimple['router']->parse($pimple['li3_request']);
+$result = $c['router']->parse($c['li3_request']);
 
 // merge the matched attributes back into Symfony's request
-$pimple['request']->attributes->add($pimple['li3_request']->params);
+$c['request']->attributes->add($c['li3_request']->params);
 
 // get the "controller" out, or default to error404
-$controller = $pimple['request']->attributes->get('controller', 'error404');
+$controller = $c['request']->attributes->get('controller', 'error404');
 
 // execute the controller and get the response
-$response = call_user_func_array($controller, array($pimple['request'], $pimple));
+$response = call_user_func_array($controller, array($c['request'], $c));
 if (!$response instanceof Response) {
     throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
 }
@@ -68,9 +68,9 @@ function homepage(Request $request) {
     return new Response($content);
 }
 
-function letters(Request $request, Pimple $pimple)
+function letters(Request $request, Pimple $c)
 {
-    $dbh = $pimple['connection'];
+    $dbh = $c['connection'];
 
     $sql = 'SELECT * FROM php_santa_letters';
     $content = '<h1>Read the letters to PHP Santa</h1>';
