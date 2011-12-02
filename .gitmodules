@@ -10,3 +10,6 @@
 [submodule "vendors/Pimple"]
 	path = vendors/Pimple
 	url = git://github.com/fabpot/Pimple.git
+[submodule "vendors/zf2"]
+	path = vendors/zf2
+	url = git://github.com/zendframework/zf2.git

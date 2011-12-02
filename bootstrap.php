@@ -7,6 +7,7 @@ use Symfony\Component\ClassLoader\UniversalClassLoader;
 $loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
 $loader->registerNamespace('Symfony', __DIR__.'/vendors');
 $loader->registerNamespace('lithium', __DIR__.'/vendors');
+$loader->registerNamespace('Zend', __DIR__.'/vendors/zf2/library');
 
 $loader->register();
 
