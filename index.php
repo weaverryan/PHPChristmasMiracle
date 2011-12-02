@@ -15,7 +15,7 @@ if ($pos = strpos($uri, '?')) {
 if ($uri == '/' || $uri == '') {
 
     echo '<h1>Welcome to PHP Santa</h1>';
-    echo sprintf('<a href="/letters">Read the letters</a>');
+    echo '<a href="/letters">Read the letters</a>';
     if (isset($_GET['name'])) {
         echo sprintf('<p>Oh, and hello %s!</p>', $_GET['name']);
     }
