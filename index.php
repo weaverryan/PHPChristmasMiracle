@@ -18,7 +18,7 @@ if ($uri == '/' || $uri == '') {
 
     echo '<h1>Welcome to PHP Santa</h1>';
     echo sprintf('<a href="/letters">Read the letters</a>');
-    if (isset($_GET['name'])) {
+    if ($name = $request->query->get('name')) {
         echo sprintf('<p>Oh, and hello %s!</p>', $_GET['name']);
     }
 

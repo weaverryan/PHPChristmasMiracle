@@ -1,5 +1,6 @@
 <?php
 
+require __DIR__.'/vendors/Symfony/Component/ClassLoader/UniversalClassLoader.php';
 use Symfony\Component\ClassLoader\UniversalClassLoader;
 
 // setup the autoloader
