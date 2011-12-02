@@ -24,14 +24,13 @@ $li3Request->url = $request->getPathInfo();
 $router = new \lithium\net\http\Router();
 $router->connect('/', array('controller' => 'homepage'));
 $router->connect('/letters', array('controller' => 'letters'));
-$li3Request = $router->parse($li3Request);
+$router->parse($li3Request);
 
-// grab the controller from the results
-if ($li3Request && isset($li3Request->params['controller'])) {
-    $controller = $li3Request->params['controller'];
-} else {
-    $controller = 'error404';
-}
+// merge the matched attributes back into Symfony's request
+$request->attributes->add($li3Request->params);
+
+// get the "controller" out, or default to error404
+$controller = $request->attributes->get('controller', 'error404');
 
 // execute the controller and get the response
 $response = call_user_func_array($controller, array($request));
