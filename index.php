@@ -52,7 +52,9 @@ if (!$response instanceof Response) {
     throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
 }
 
+// send the response
 $response->send();
+
 
 /**
  * My Controllers!!!!
