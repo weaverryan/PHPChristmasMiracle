@@ -21,7 +21,7 @@ $li3Request = new Li3Request();
 $li3Request->url = $request->getPathInfo();
 
 // create a router, build the routes, and then execute it
-$router = new \lithium\net\http\Router();
+$router = new Router();
 $router->connect('/letters', array('controller' => 'letters'));
 $router->connect('/{:name}', array('controller' => 'homepage', 'name' => null));
 $router->parse($li3Request);
@@ -46,7 +46,7 @@ $response->send();
 
 function homepage(Request $request) {
     $content = '<h1>Welcome to PHP Santa</h1>';
-    $content .= sprintf('<a href="/letters">Read the letters</a>');
+    $content .= '<a href="/letters">Read the letters</a>';
     if ($name = $request->attributes->get('name')) {
         $content .= sprintf('<p>Oh, and hello %s!</p>', $name);
     }
