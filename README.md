@@ -20,21 +20,37 @@ see how things looked:
 
 * `start` - A flat, PHP4-style application
 
+    git checkout -b start origin/start
+
 * `stage2` - Introduction of autoloader and Request and Response classes
+
+    git checkout -b stage2-http-foundation origin/stage2-http-foundation
 
 * `stage3` - Introduction of a router
 
+    git checkout -b stage3-routing origin/stage3-routing
+
 * `stage4` - Introduction of a dependency injection container
+
+    git checkout -b stage4-container origin/stage4-container
 
 * `stage5` - Introduction of ZF2 logger
 
+    git checkout -b stage5-zf2-logger origin/stage5-zf2-logger
+
 * `stage6` - Reorganization of the project's structure
+
+    git checkout -b stage6-dir-structure origin/stage6-dir-structure
 
 Usage
 -----
 
 To use the app, clone it, check out to whichever branch you want, and do
 the following:
+
+* Clone the repository
+
+    git clone git://github.com/weaverryan/PHPChristmasMiracle.git
 
 * Initialize the database via `php data/setupDb.php`
 
