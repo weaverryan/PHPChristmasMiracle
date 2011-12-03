@@ -1,7 +1,7 @@
 PHPChristmasMiracle
 ===================
 
-This application was created to accompany a presentation a
+This application was created to accompany a presentation at
 [CodeWorks](http://codeworks.phparch.com/).
 
 The purpose is two-fold:
