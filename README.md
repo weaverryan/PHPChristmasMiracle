@@ -54,10 +54,9 @@ the following:
 
 * Initialize the database via `php data/setupDb.php`
 
-* Pull down the submodules:
+* Run Composer
 
-    git submodule init
-    git submodule update
+    composer install
 
 If you have any permissions problems, run the following:
 
