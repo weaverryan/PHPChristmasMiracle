@@ -1,0 +1,81 @@
+diff --git a/composer.json b/composer.json
+index 9577edb..52e5602 100644
+--- a/composer.json
++++ b/composer.json
+@@ -1,5 +1,6 @@
+ {
+     "require": {
+-        "symfony/http-foundation": "~2.5"
++        "symfony/http-foundation": "~2.5",
++        "aura/router": "~2.1"
+     }
+ }
+diff --git a/composer.lock b/composer.lock
+index 0c27e0c..aee9a74 100644
+--- a/composer.lock
++++ b/composer.lock
+@@ -4,9 +4,63 @@
+         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+         "This file is @generated automatically"
+     ],
+-    "hash": "b00ccdf52f1019a5488e57d76eaf5eec",
++    "hash": "05160fed37a43d33fa4fa22bcc76836f",
+     "packages": [
+         {
++            "name": "aura/router",
++            "version": "2.1.1",
++            "source": {
++                "type": "git",
++                "url": "https://github.com/auraphp/Aura.Router.git",
++                "reference": "23056b104816f495f4f9f88fc6e7d325671c3bc6"
++            },
++            "dist": {
++                "type": "zip",
++                "url": "https://api.github.com/repos/auraphp/Aura.Router/zipball/23056b104816f495f4f9f88fc6e7d325671c3bc6",
++                "reference": "23056b104816f495f4f9f88fc6e7d325671c3bc6",
++                "shasum": ""
++            },
++            "require": {
++                "php": ">=5.3.0"
++            },
++            "type": "library",
++            "extra": {
++                "aura": {
++                    "type": "library",
++                    "config": {
++                        "common": "Aura\\Router\\_Config\\Common"
++                    }
++                },
++                "branch-alias": {
++                    "dev-develop-2": "2.0.x-dev"
++                }
++            },
++            "autoload": {
++                "psr-4": {
++                    "Aura\\Router\\": "src/",
++                    "Aura\\Router\\_Config\\": "config/"
++                }
++            },
++            "notification-url": "https://packagist.org/downloads/",
++            "license": [
++                "BSD-2-Clause"
++            ],
++            "authors": [
++                {
++                    "name": "Aura.Router Contributors",
++                    "homepage": "https://github.com/auraphp/Aura.Router/contributors"
++                }
++            ],
++            "description": "A web router implementation; given a URI path and a copy of $_SERVER, it will extract path-info parameter values for a specific route.",
++            "homepage": "https://github.com/auraphp/Aura.Router",
++            "keywords": [
++                "route",
++                "router",
++                "routing"
++            ],
++            "time": "2014-10-22 14:14:56"
++        },
++        {
+             "name": "symfony/http-foundation",
+             "version": "v2.5.6",
+             "target-dir": "Symfony/Component/HttpFoundation",

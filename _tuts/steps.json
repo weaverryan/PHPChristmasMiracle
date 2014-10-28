@@ -4,7 +4,17 @@
             "id": "start",
             "name": "start",
             "description": null
+        },
+        {
+            "id": "symfony-httpfoundation",
+            "name": "Symfony: HttpFoundation",
+            "description": null
+        },
+        {
+            "id": "aura-router",
+            "name": "Aura: Router",
+            "description": null
         }
     ],
-    "sha": "5e466719751ccc1c99724fd61865ab6611c8a262"
+    "sha": "0ce63f01166eda74f7c74511bf08726bf8dacf67"
 }

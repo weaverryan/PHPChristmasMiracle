@@ -1,0 +1,177 @@
+diff --git a/.gitignore b/.gitignore
+index bc46846..58a8864 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1 +1,2 @@
+ /data/database.sqlite
++/vendor
+diff --git a/bootstrap.php b/bootstrap.php
+new file mode 100644
+index 0000000..52faebf
+--- /dev/null
++++ b/bootstrap.php
+@@ -0,0 +1,4 @@
++<?php
++
++require __DIR__.'/vendor/autoload.php';
++
+diff --git a/composer.json b/composer.json
+new file mode 100644
+index 0000000..9577edb
+--- /dev/null
++++ b/composer.json
+@@ -0,0 +1,5 @@
++{
++    "require": {
++        "symfony/http-foundation": "~2.5"
++    }
++}
+diff --git a/composer.lock b/composer.lock
+new file mode 100644
+index 0000000..0c27e0c
+--- /dev/null
++++ b/composer.lock
+@@ -0,0 +1,70 @@
++{
++    "_readme": [
++        "This file locks the dependencies of your project to a known state",
++        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
++        "This file is @generated automatically"
++    ],
++    "hash": "b00ccdf52f1019a5488e57d76eaf5eec",
++    "packages": [
++        {
++            "name": "symfony/http-foundation",
++            "version": "v2.5.6",
++            "target-dir": "Symfony/Component/HttpFoundation",
++            "source": {
++                "type": "git",
++                "url": "https://github.com/symfony/HttpFoundation.git",
++                "reference": "56111fc8ba8bcad93d367532babecc6ce17f66ce"
++            },
++            "dist": {
++                "type": "zip",
++                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/56111fc8ba8bcad93d367532babecc6ce17f66ce",
++                "reference": "56111fc8ba8bcad93d367532babecc6ce17f66ce",
++                "shasum": ""
++            },
++            "require": {
++                "php": ">=5.3.3"
++            },
++            "require-dev": {
++                "symfony/expression-language": "~2.4"
++            },
++            "type": "library",
++            "extra": {
++                "branch-alias": {
++                    "dev-master": "2.5-dev"
++                }
++            },
++            "autoload": {
++                "psr-0": {
++                    "Symfony\\Component\\HttpFoundation\\": ""
++                },
++                "classmap": [
++                    "Symfony/Component/HttpFoundation/Resources/stubs"
++                ]
++            },
++            "notification-url": "https://packagist.org/downloads/",
++            "license": [
++                "MIT"
++            ],
++            "authors": [
++                {
++                    "name": "Symfony Community",
++                    "homepage": "http://symfony.com/contributors"
++                },
++                {
++                    "name": "Fabien Potencier",
++                    "email": "fabien@symfony.com"
++                }
++            ],
++            "description": "Symfony HttpFoundation Component",
++            "homepage": "http://symfony.com",
++            "time": "2014-10-24 05:49:22"
++        }
++    ],
++    "packages-dev": [],
++    "aliases": [],
++    "minimum-stability": "stable",
++    "stability-flags": [],
++    "prefer-stable": false,
++    "platform": [],
++    "platform-dev": []
++}
+diff --git a/index.php b/index.php
+index a2b3c5d..ed2564e 100644
+--- a/index.php
++++ b/index.php
+@@ -1,4 +1,5 @@
+ <?php
++require __DIR__.'/bootstrap.php';
+ 
+ try {
+     $dbPath = __DIR__.'/data/database.sqlite';
+@@ -7,36 +8,46 @@ try {
+     die('Panic! '.$e->getMessage());
+ }
+ 
+-$uri = $_SERVER['REQUEST_URI'];
+-if ($pos = strpos($uri, '?')) {
+-    $uri = substr($uri, 0, $pos);
+-}
++// create a request object to help us
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpFoundation\Response;
++$request = Request::createFromGlobals();
++
++$uri = $request->getPathInfo();
+ 
+ if ($uri == '/' || $uri == '') {
+ 
+-    echo '<h1>PHP Camp!</h1>';
+-    echo '<a href="/attendees">See the attendees</a>';
+-    if (isset($_GET['name'])) {
+-        echo sprintf('<p>Oh, and hello %s!</p>', $_GET['name']);
++    $content = '<h1>PHP Camp!</h1>';
++    $content .= '<a href="/attendees">See the attendees</a>';
++    if ($name = $request->query->get('name')) {
++        $content .= sprintf('<p>Oh, and hello %s!</p>', $name);
+     }
+ 
++    $response = new Response($content);
++
+ } elseif ($uri == '/attendees') {
+ 
+     $sql = 'SELECT * FROM php_camp';
+-    echo '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />';
+-    echo '<h1>PHP Camp Attendees</h1>';
+-    echo '<table class="table" style="width: 300px;">';
++    $content = '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />';
++    $content .= '<h1>PHP Camp Attendees</h1>';
++    $content .= '<table class="table" style="width: 300px;">';
+     foreach ($dbh->query($sql) as $row) {
+-        echo sprintf(
++        $content .= sprintf(
+             '<tr><td style="font-size: 24px;">%s</td><td><img src="%s" height="120" /></td></tr>',
+             $row['attendee'],
+             $row['avatar_url']
+         );
+     }
+-    echo '</table>';
++    $content .= '</table>';
++
++    $response = new Response($content);
+ 
+ } else {
+-    header("HTTP/1.1 404 Not Found");
+-    echo '<h1>404 Page not Found</h1>';
+-    echo '<p>Find a boy (or girl) scout - they can fix this!</p>';
++    $content = '<h1>404 Page not Found</h1>';
++    $content .= '<p>Find a boy (or girl) scout - they can fix this!</p>';
++
++    $response = new Response($content);
++    $response->setStatusCode(404);
+ }
++
++$response->send();
