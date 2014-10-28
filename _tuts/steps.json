@@ -24,7 +24,12 @@
             "id": "zf-logger",
             "name": "ZF: Logger",
             "description": null
+        },
+        {
+            "id": "reorganization",
+            "name": "Reorganization",
+            "description": null
         }
     ],
-    "sha": "35aba962caa126b84dedfc277194e58643cdf9cd"
+    "sha": "bc624c5e8ca0fb8126e120712a21560498b7a882"
 }
