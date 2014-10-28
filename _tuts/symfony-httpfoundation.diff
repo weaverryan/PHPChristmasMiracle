@@ -103,7 +103,7 @@ index 0000000..0c27e0c
 +    "platform-dev": []
 +}
 diff --git a/index.php b/index.php
-index a2b3c5d..ed2564e 100644
+index 688df6c..ed2564e 100644
 --- a/index.php
 +++ b/index.php
 @@ -1,4 +1,5 @@
@@ -112,14 +112,11 @@ index a2b3c5d..ed2564e 100644
  
  try {
      $dbPath = __DIR__.'/data/database.sqlite';
-@@ -7,36 +8,46 @@ try {
+@@ -7,33 +8,46 @@ try {
      die('Panic! '.$e->getMessage());
  }
  
--$uri = $_SERVER['REQUEST_URI'];
--if ($pos = strpos($uri, '?')) {
--    $uri = substr($uri, 0, $pos);
--}
+-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 +// create a request object to help us
 +use Symfony\Component\HttpFoundation\Request;
 +use Symfony\Component\HttpFoundation\Response;

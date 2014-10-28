@@ -14,7 +14,12 @@
             "id": "aura-router",
             "name": "Aura: Router",
             "description": null
+        },
+        {
+            "id": "pimple-dic",
+            "name": "Pimple: DIC",
+            "description": null
         }
     ],
-    "sha": "0ce63f01166eda74f7c74511bf08726bf8dacf67"
+    "sha": "cbef8137eacd24440c00333da631331aed4f9e72"
 }
