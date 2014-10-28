@@ -14,24 +14,29 @@ if ($pos = strpos($uri, '?')) {
 
 if ($uri == '/' || $uri == '') {
 
-    echo '<h1>Welcome to PHP Santa</h1>';
-    echo '<a href="/letters">Read the letters</a>';
+    echo '<h1>PHP Camp!</h1>';
+    echo '<a href="/attendees">See the attendees</a>';
     if (isset($_GET['name'])) {
         echo sprintf('<p>Oh, and hello %s!</p>', $_GET['name']);
     }
 
-} elseif ($uri == '/letters') {
+} elseif ($uri == '/attendees') {
 
-    $sql = 'SELECT * FROM php_santa_letters';
-    echo '<h1>Read the letters to PHP Santa</h1>';
-    echo '<ul>';
+    $sql = 'SELECT * FROM php_camp';
+    echo '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />';
+    echo '<h1>PHP Camp Attendees</h1>';
+    echo '<table class="table" style="width: 300px;">';
     foreach ($dbh->query($sql) as $row) {
-        echo sprintf('<li>%s - dated %s</li>', $row['content'], $row['received_at']);
+        echo sprintf(
+            '<tr><td style="font-size: 24px;">%s</td><td><img src="%s" height="120" /></td></tr>',
+            $row['attendee'],
+            $row['avatar_url']
+        );
     }
-    echo '</ul>';
+    echo '</table>';
 
 } else {
     header("HTTP/1.1 404 Not Found");
     echo '<h1>404 Page not Found</h1>';
-    echo '<p>This is most certainly *not* an xmas miracle</p>';
+    echo '<p>Find a boy (or girl) scout - they can fix this!</p>';
 }

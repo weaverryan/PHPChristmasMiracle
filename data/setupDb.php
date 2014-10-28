@@ -13,16 +13,19 @@ $dbh->beginTransaction();
 
 $query = <<<EOF
 
-DROP TABLE IF EXISTS php_santa_letters;
+DROP TABLE IF EXISTS php_camp;
 
-CREATE TABLE php_santa_letters (
+CREATE TABLE php_camp (
     id INTEGER PRIMARY KEY,
-    content TEXT,
-    received_at TIMESTAMP
+    attendee TEXT,
+    avatar_url TEXT
 );
 
-INSERT INTO php_santa_letters VALUES(1,'A unified Request Response interface','2011-12-01');
-INSERT INTO php_santa_letters VALUES(2,'A package manager that''s fun to use!','2011-12-01');
+INSERT INTO php_camp VALUES(1,'weierophinney', 'http://i.vimeocdn.com/portrait/4175704_300x300.jpg');
+INSERT INTO php_camp VALUES(2,'fabpot','https://pbs.twimg.com/profile_images/443336758403424256/U5bzXI5l_400x400.jpeg');
+INSERT INTO php_camp VALUES(3, 'pmjones', 'https://pbs.twimg.com/profile_images/482556486824910848/Bb4fyXhn_400x400.jpeg');
+INSERT INTO php_camp VALUES(4, 'jmikola', '/images/wurstcon.jpg');
+
 EOF
     ;
 
