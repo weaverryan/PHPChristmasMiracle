@@ -7,10 +7,7 @@ try {
     die('Panic! '.$e->getMessage());
 }
 
-$uri = $_SERVER['REQUEST_URI'];
-if ($pos = strpos($uri, '?')) {
-    $uri = substr($uri, 0, $pos);
-}
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 if ($uri == '/' || $uri == '') {
 
