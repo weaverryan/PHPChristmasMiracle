@@ -27,19 +27,25 @@ the following:
 
 * Run Composer
 
-    composer install
+```bash
+composer install
+```
 
 * Initialize the database via `php data/setupDb.php`
 
 * Run the build-in web server:
 
-    php -S localhost:8000
+```bash
+php -S localhost:8000
+```
 
 Now put that address in your browser!
 
 If you have any permissions problems, run the following:
 
-    chmod 777 data/database.sqlite
-    chmod 777 data/web.log
+```bash
+chmod 777 data/database.sqlite
+chmod 777 data/web.log
+```
 
 Enjoy!
