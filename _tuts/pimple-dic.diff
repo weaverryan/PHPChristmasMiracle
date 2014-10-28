@@ -78,7 +78,7 @@ index aee9a74..9642f7c 100644
              "version": "v2.5.6",
              "target-dir": "Symfony/Component/HttpFoundation",
 diff --git a/index.php b/index.php
-index d8c644d..029e7d9 100644
+index d8c644d..7c5d9af 100644
 --- a/index.php
 +++ b/index.php
 @@ -12,30 +12,52 @@ try {
@@ -125,11 +125,11 @@ index d8c644d..029e7d9 100644
 +    return $router;
 +};
 +
-+
-+$uri = $c['request']->getPathInfo();
-+
-+
-+$route = $c['router']->match($uri, $c['request']->server->all());
++// run the framework!
++$route = $c['router']->match(
++    $c['request']->getPathInfo(),
++    $c['request']->server->all()
++);
  
  // merge the matched attributes back into Symfony's request
  if ($route) {

@@ -1,0 +1,248 @@
+diff --git a/.gitignore b/.gitignore
+index 58a8864..32cb585 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,2 +1,3 @@
+ /data/database.sqlite
+ /vendor
++/data/web.log
+diff --git a/composer.json b/composer.json
+index 5aff5e1..b5634d1 100644
+--- a/composer.json
++++ b/composer.json
+@@ -2,6 +2,7 @@
+     "require": {
+         "symfony/http-foundation": "~2.5",
+         "aura/router": "~2.1",
+-        "pimple/pimple": "~3.0"
++        "pimple/pimple": "~3.0",
++        "zendframework/zend-log": "~2.3"
+     }
+ }
+diff --git a/composer.lock b/composer.lock
+index 9642f7c..5dfd2c3 100644
+--- a/composer.lock
++++ b/composer.lock
+@@ -4,7 +4,7 @@
+         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+         "This file is @generated automatically"
+     ],
+-    "hash": "bb1db9d97f1d15cc2909421fd8279bc0",
++    "hash": "9c896a0d521571be9af54e819eef46e7",
+     "packages": [
+         {
+             "name": "aura/router",
+@@ -158,6 +158,164 @@
+             "description": "Symfony HttpFoundation Component",
+             "homepage": "http://symfony.com",
+             "time": "2014-10-24 05:49:22"
++        },
++        {
++            "name": "zendframework/zend-log",
++            "version": "2.3.3",
++            "target-dir": "Zend/Log",
++            "source": {
++                "type": "git",
++                "url": "https://github.com/zendframework/Component_ZendLog.git",
++                "reference": "7c8c83be87dabf133812c17a99bb8a8522c155d1"
++            },
++            "dist": {
++                "type": "zip",
++                "url": "https://api.github.com/repos/zendframework/Component_ZendLog/zipball/7c8c83be87dabf133812c17a99bb8a8522c155d1",
++                "reference": "7c8c83be87dabf133812c17a99bb8a8522c155d1",
++                "shasum": ""
++            },
++            "require": {
++                "php": ">=5.3.23",
++                "zendframework/zend-servicemanager": "self.version",
++                "zendframework/zend-stdlib": "self.version"
++            },
++            "require-dev": {
++                "zendframework/zend-console": "self.version",
++                "zendframework/zend-db": "self.version",
++                "zendframework/zend-escaper": "self.version",
++                "zendframework/zend-mail": "self.version",
++                "zendframework/zend-validator": "self.version"
++            },
++            "suggest": {
++                "ext-mongo": "*",
++                "zendframework/zend-console": "Zend\\Console component",
++                "zendframework/zend-db": "Zend\\Db component",
++                "zendframework/zend-escaper": "Zend\\Escaper component, for use in the XML formatter",
++                "zendframework/zend-mail": "Zend\\Mail component",
++                "zendframework/zend-validator": "Zend\\Validator component"
++            },
++            "type": "library",
++            "extra": {
++                "branch-alias": {
++                    "dev-master": "2.3-dev",
++                    "dev-develop": "2.4-dev"
++                }
++            },
++            "autoload": {
++                "psr-0": {
++                    "Zend\\Log\\": ""
++                }
++            },
++            "notification-url": "https://packagist.org/downloads/",
++            "license": [
++                "BSD-3-Clause"
++            ],
++            "description": "component for general purpose logging",
++            "homepage": "https://github.com/zendframework/zf2",
++            "keywords": [
++                "log",
++                "logging",
++                "zf2"
++            ],
++            "time": "2014-09-16 22:58:11"
++        },
++        {
++            "name": "zendframework/zend-servicemanager",
++            "version": "2.3.3",
++            "target-dir": "Zend/ServiceManager",
++            "source": {
++                "type": "git",
++                "url": "https://github.com/zendframework/Component_ZendServiceManager.git",
++                "reference": "559403e4fd10db2516641f20f129a568d7e6a993"
++            },
++            "dist": {
++                "type": "zip",
++                "url": "https://api.github.com/repos/zendframework/Component_ZendServiceManager/zipball/559403e4fd10db2516641f20f129a568d7e6a993",
++                "reference": "559403e4fd10db2516641f20f129a568d7e6a993",
++                "shasum": ""
++            },
++            "require": {
++                "php": ">=5.3.23"
++            },
++            "require-dev": {
++                "zendframework/zend-di": "self.version"
++            },
++            "suggest": {
++                "zendframework/zend-di": "Zend\\Di component"
++            },
++            "type": "library",
++            "extra": {
++                "branch-alias": {
++                    "dev-master": "2.3-dev",
++                    "dev-develop": "2.4-dev"
++                }
++            },
++            "autoload": {
++                "psr-0": {
++                    "Zend\\ServiceManager\\": ""
++                }
++            },
++            "notification-url": "https://packagist.org/downloads/",
++            "license": [
++                "BSD-3-Clause"
++            ],
++            "homepage": "https://github.com/zendframework/zf2",
++            "keywords": [
++                "servicemanager",
++                "zf2"
++            ],
++            "time": "2014-09-16 22:58:11"
++        },
++        {
++            "name": "zendframework/zend-stdlib",
++            "version": "2.3.3",
++            "target-dir": "Zend/Stdlib",
++            "source": {
++                "type": "git",
++                "url": "https://github.com/zendframework/Component_ZendStdlib.git",
++                "reference": "fa33e6647f830d0d2a1cb451efcdfe1bb9a66c33"
++            },
++            "dist": {
++                "type": "zip",
++                "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/fa33e6647f830d0d2a1cb451efcdfe1bb9a66c33",
++                "reference": "fa33e6647f830d0d2a1cb451efcdfe1bb9a66c33",
++                "shasum": ""
++            },
++            "require": {
++                "php": ">=5.3.23"
++            },
++            "require-dev": {
++                "zendframework/zend-eventmanager": "self.version",
++                "zendframework/zend-serializer": "self.version",
++                "zendframework/zend-servicemanager": "self.version"
++            },
++            "suggest": {
++                "zendframework/zend-eventmanager": "To support aggregate hydrator usage",
++                "zendframework/zend-serializer": "Zend\\Serializer component",
++                "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
++            },
++            "type": "library",
++            "extra": {
++                "branch-alias": {
++                    "dev-master": "2.3-dev",
++                    "dev-develop": "2.4-dev"
++                }
++            },
++            "autoload": {
++                "psr-0": {
++                    "Zend\\Stdlib\\": ""
++                }
++            },
++            "notification-url": "https://packagist.org/downloads/",
++            "license": [
++                "BSD-3-Clause"
++            ],
++            "homepage": "https://github.com/zendframework/zf2",
++            "keywords": [
++                "stdlib",
++                "zf2"
++            ],
++            "time": "2014-09-16 22:58:11"
+         }
+     ],
+     "packages-dev": [],
+diff --git a/index.php b/index.php
+index 7c5d9af..5f42f7a 100644
+--- a/index.php
++++ b/index.php
+@@ -13,11 +13,14 @@ use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\HttpFoundation\Response;
+ use Aura\Router\RouterFactory;
+ use Pimple\Container;
++use Zend\Log\Writer\Stream;
++use Zend\Log\Logger;
+ 
+ $c = new Container();
+ 
+ // configuration
+ $c['connection_string'] = 'sqlite:'.__DIR__.'/data/database.sqlite';
++$c['log_path'] = __DIR__.'/data/web.log';
+ 
+ // Service setup
+ $c['connection'] = function(Container $c) {
+@@ -41,6 +44,15 @@ $c['router'] = function() {
+ 
+     return $router;
+ };
++$c['logger_writer'] = function(Container $c) {
++    return new Stream($c['log_path']);
++};
++$c['logger'] = function(Container $c) {
++    $logger = new Logger();
++    $logger->addWriter($c['logger_writer']);
++
++    return $logger;
++};
+ 
+ // run the framework!
+ $route = $c['router']->match(
+@@ -56,6 +68,13 @@ if ($route) {
+ // get the "controller" out, or default to error404_controller
+ $controller = $c['request']->attributes->get('controller', 'error404_controller');
+ 
++if ($controller == 'error404_controller') {
++    $msg = sprintf('Controller not found for "%s"', $c['request']->getPathInfo());
++    $c['logger']->err($msg);
++} else {
++    $c['logger']->info(sprintf('Found controller "%s"', $controller));
++}
++
+ // execute the controller and get the response
+ $response = call_user_func_array($controller, array($c['request'], $c));
+ if (!$response instanceof Response) {

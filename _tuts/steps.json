@@ -19,7 +19,12 @@
             "id": "pimple-dic",
             "name": "Pimple: DIC",
             "description": null
+        },
+        {
+            "id": "zf-logger",
+            "name": "ZF: Logger",
+            "description": null
         }
     ],
-    "sha": "cbef8137eacd24440c00333da631331aed4f9e72"
+    "sha": "35aba962caa126b84dedfc277194e58643cdf9cd"
 }
