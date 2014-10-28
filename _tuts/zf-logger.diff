@@ -198,10 +198,10 @@ index 9642f7c..5dfd2c3 100644
      ],
      "packages-dev": [],
 diff --git a/index.php b/index.php
-index 7c5d9af..5f42f7a 100644
+index 646ee16..919eee1 100644
 --- a/index.php
 +++ b/index.php
-@@ -13,11 +13,14 @@ use Symfony\Component\HttpFoundation\Request;
+@@ -6,11 +6,14 @@ use Symfony\Component\HttpFoundation\Request;
  use Symfony\Component\HttpFoundation\Response;
  use Aura\Router\RouterFactory;
  use Pimple\Container;
@@ -216,7 +216,7 @@ index 7c5d9af..5f42f7a 100644
  
  // Service setup
  $c['connection'] = function(Container $c) {
-@@ -41,6 +44,15 @@ $c['router'] = function() {
+@@ -34,6 +37,15 @@ $c['router'] = function() {
  
      return $router;
  };
@@ -232,7 +232,7 @@ index 7c5d9af..5f42f7a 100644
  
  // run the framework!
  $route = $c['router']->match(
-@@ -56,6 +68,13 @@ if ($route) {
+@@ -49,6 +61,13 @@ if ($route) {
  // get the "controller" out, or default to error404_controller
  $controller = $c['request']->attributes->get('controller', 'error404_controller');
  

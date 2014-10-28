@@ -147,20 +147,13 @@ index 0000000..9adb562
 +    return $response;
 +}
 diff --git a/index.php b/index.php
-index 5f42f7a..15a2099 100644
+index 919eee1..dd22794 100644
 --- a/index.php
 +++ b/index.php
-@@ -1,128 +1,7 @@
+@@ -1,121 +1,8 @@
  <?php
 -require __DIR__.'/bootstrap.php';
--
--try {
--    $dbPath = __DIR__.'/data/database.sqlite';
--    $dbh = new PDO('sqlite:'.$dbPath);
--} catch(PDOException $e) {
--    die('Panic! '.$e->getMessage());
--}
--
+ 
 -// create a request object to help us
 -use Symfony\Component\HttpFoundation\Request;
 -use Symfony\Component\HttpFoundation\Response;
@@ -233,8 +226,12 @@ index 5f42f7a..15a2099 100644
 -if (!$response instanceof Response) {
 -    throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
 -}
--
--$response->send();
++$c = require __DIR__.'/bootstrap.php';
++require 'routing.php';
++require 'controllers.php';
+ 
++$response = _run_app($c);
+ $response->send();
 -
 -/*
 - * My Controllers!
@@ -278,13 +275,7 @@ index 5f42f7a..15a2099 100644
 -
 -    return $response;
 -}
-+$c = require __DIR__.'/bootstrap.php';
-+require 'routing.php';
-+require 'controllers.php';
- 
-+$response = _run_app($c);
-+$response->send();
-\ No newline at end of file
+-
 diff --git a/routing.php b/routing.php
 new file mode 100644
 index 0000000..2b48429

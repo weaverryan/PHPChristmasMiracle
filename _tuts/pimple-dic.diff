@@ -78,30 +78,31 @@ index aee9a74..9642f7c 100644
              "version": "v2.5.6",
              "target-dir": "Symfony/Component/HttpFoundation",
 diff --git a/index.php b/index.php
-index d8c644d..7c5d9af 100644
+index d8c644d..646ee16 100644
 --- a/index.php
 +++ b/index.php
-@@ -12,30 +12,52 @@ try {
+@@ -1,41 +1,56 @@
+ <?php
+ require __DIR__.'/bootstrap.php';
+ 
+-try {
+-    $dbPath = __DIR__.'/data/database.sqlite';
+-    $dbh = new PDO('sqlite:'.$dbPath);
+-} catch(PDOException $e) {
+-    die('Panic! '.$e->getMessage());
+-}
+-
+ // create a request object to help us
  use Symfony\Component\HttpFoundation\Request;
  use Symfony\Component\HttpFoundation\Response;
  use Aura\Router\RouterFactory;
 +use Pimple\Container;
- 
--$request = Request::createFromGlobals();
--$uri = $request->getPathInfo();
++
 +$c = new Container();
- 
--$routerFactory = new RouterFactory();
--$router = $routerFactory->newInstance();
++
 +// configuration
 +$c['connection_string'] = 'sqlite:'.__DIR__.'/data/database.sqlite';
- 
--// create a router, build the routes, and then execute it
--$router->add('attendees_list', '/attendees')
--    ->addValues(['controller' => 'attendees_controller']);
--$router->add('homepage', '{/name}')
--    ->addValues(['controller' => 'homepage_controller']);
--$route = $router->match($uri, $request->server->all());
++
 +// Service setup
 +$c['connection'] = function(Container $c) {
 +    return new PDO($c['connection_string']);
@@ -115,16 +116,26 @@ index d8c644d..7c5d9af 100644
 +    $routerFactory = new RouterFactory();
 +
 +    $router = $routerFactory->newInstance();
-+
+ 
+-$request = Request::createFromGlobals();
+-$uri = $request->getPathInfo();
 +    // create a router, build the routes, and then execute it
 +    $router->add('attendees_list', '/attendees')
 +        ->addValues(['controller' => 'attendees_controller']);
 +    $router->add('homepage', '{/name}')
 +        ->addValues(['controller' => 'homepage_controller']);
-+
+ 
+-$routerFactory = new RouterFactory();
+-$router = $routerFactory->newInstance();
 +    return $router;
 +};
-+
+ 
+-// create a router, build the routes, and then execute it
+-$router->add('attendees_list', '/attendees')
+-    ->addValues(['controller' => 'attendees_controller']);
+-$router->add('homepage', '{/name}')
+-    ->addValues(['controller' => 'homepage_controller']);
+-$route = $router->match($uri, $request->server->all());
 +// run the framework!
 +$route = $c['router']->match(
 +    $c['request']->getPathInfo(),
@@ -147,7 +158,7 @@ index d8c644d..7c5d9af 100644
  if (!$response instanceof Response) {
      throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
  }
-@@ -56,8 +78,8 @@ function homepage_controller(Request $request) {
+@@ -56,8 +71,8 @@ function homepage_controller(Request $request) {
      return new Response($content);
  }
  
