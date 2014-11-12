@@ -78,10 +78,10 @@ index aee9a74..9642f7c 100644
              "version": "v2.5.6",
              "target-dir": "Symfony/Component/HttpFoundation",
 diff --git a/index.php b/index.php
-index d8c644d..646ee16 100644
+index d8c644d..e64fbc5 100644
 --- a/index.php
 +++ b/index.php
-@@ -1,41 +1,56 @@
+@@ -1,30 +1,43 @@
  <?php
  require __DIR__.'/bootstrap.php';
  
@@ -97,7 +97,9 @@ index d8c644d..646ee16 100644
  use Symfony\Component\HttpFoundation\Response;
  use Aura\Router\RouterFactory;
 +use Pimple\Container;
-+
+ 
+-$request = Request::createFromGlobals();
+-$uri = $request->getPathInfo();
 +$c = new Container();
 +
 +// configuration
@@ -107,28 +109,25 @@ index d8c644d..646ee16 100644
 +$c['connection'] = function(Container $c) {
 +    return new PDO($c['connection_string']);
 +};
-+
-+$c['request'] = function() {
-+    return Request::createFromGlobals();
-+};
-+
+ 
+-$routerFactory = new RouterFactory();
+-$router = $routerFactory->newInstance();
 +$c['router'] = function() {
 +    $routerFactory = new RouterFactory();
 +
 +    $router = $routerFactory->newInstance();
- 
--$request = Request::createFromGlobals();
--$uri = $request->getPathInfo();
++
 +    // create a router, build the routes, and then execute it
 +    $router->add('attendees_list', '/attendees')
 +        ->addValues(['controller' => 'attendees_controller']);
 +    $router->add('homepage', '{/name}')
 +        ->addValues(['controller' => 'homepage_controller']);
- 
--$routerFactory = new RouterFactory();
--$router = $routerFactory->newInstance();
++
 +    return $router;
 +};
++
++// run the framework!
++$request = Request::createFromGlobals();
  
 -// create a router, build the routes, and then execute it
 -$router->add('attendees_list', '/attendees')
@@ -136,29 +135,23 @@ index d8c644d..646ee16 100644
 -$router->add('homepage', '{/name}')
 -    ->addValues(['controller' => 'homepage_controller']);
 -$route = $router->match($uri, $request->server->all());
-+// run the framework!
 +$route = $c['router']->match(
-+    $c['request']->getPathInfo(),
-+    $c['request']->server->all()
++    $request->getPathInfo(),
++    $request->server->all()
 +);
  
  // merge the matched attributes back into Symfony's request
  if ($route) {
--    $request->attributes->add($route->params);
-+    $c['request']->attributes->add($route->params);
- }
- 
- // get the "controller" out, or default to error404_controller
--$controller = $request->attributes->get('controller', 'error404_controller');
-+$controller = $c['request']->attributes->get('controller', 'error404_controller');
+@@ -35,7 +48,7 @@ if ($route) {
+ $controller = $request->attributes->get('controller', 'error404_controller');
  
  // execute the controller and get the response
 -$response = call_user_func_array($controller, array($request));
-+$response = call_user_func_array($controller, array($c['request'], $c));
++$response = call_user_func_array($controller, array($request, $c));
  if (!$response instanceof Response) {
      throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
  }
-@@ -56,8 +71,8 @@ function homepage_controller(Request $request) {
+@@ -56,8 +69,8 @@ function homepage_controller(Request $request) {
      return new Response($content);
  }
  

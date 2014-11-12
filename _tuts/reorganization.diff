@@ -146,10 +146,10 @@ index 0000000..9adb562
 +    return $response;
 +}
 diff --git a/index.php b/index.php
-index 919eee1..2064c68 100644
+index 0add68c..2064c68 100644
 --- a/index.php
 +++ b/index.php
-@@ -1,121 +1,9 @@
+@@ -1,119 +1,9 @@
  <?php
 -require __DIR__.'/bootstrap.php';
  
@@ -172,10 +172,6 @@ index 919eee1..2064c68 100644
 -    return new PDO($c['connection_string']);
 -};
 -
--$c['request'] = function() {
--    return Request::createFromGlobals();
--};
--
 -$c['router'] = function() {
 -    $routerFactory = new RouterFactory();
 -
@@ -186,7 +182,7 @@ index 919eee1..2064c68 100644
 -        ->addValues(['controller' => 'attendees_controller']);
 -    $router->add('homepage', '{/name}')
 -        ->addValues(['controller' => 'homepage_controller']);
--
+ 
 -    return $router;
 -};
 -$c['logger_writer'] = function(Container $c) {
@@ -198,21 +194,24 @@ index 919eee1..2064c68 100644
 -
 -    return $logger;
 -};
--
++require __DIR__.'/bootstrap.php';
+ 
 -// run the framework!
+ $request = Request::createFromGlobals();
+-
 -$route = $c['router']->match(
--    $c['request']->getPathInfo(),
--    $c['request']->server->all()
+-    $request->getPathInfo(),
+-    $request->server->all()
 -);
 -
 -// merge the matched attributes back into Symfony's request
 -if ($route) {
--    $c['request']->attributes->add($route->params);
+-    $request->attributes->add($route->params);
 -}
 -
 -// get the "controller" out, or default to error404_controller
--$controller = $c['request']->attributes->get('controller', 'error404_controller');
- 
+-$controller = $request->attributes->get('controller', 'error404_controller');
+-
 -if ($controller == 'error404_controller') {
 -    $msg = sprintf('Controller not found for "%s"', $c['request']->getPathInfo());
 -    $c['logger']->err($msg);
@@ -221,13 +220,11 @@ index 919eee1..2064c68 100644
 -}
 -
 -// execute the controller and get the response
--$response = call_user_func_array($controller, array($c['request'], $c));
+-$response = call_user_func_array($controller, array($request, $c));
 -if (!$response instanceof Response) {
 -    throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
 -}
-+require __DIR__.'/bootstrap.php';
- 
-+$request = Request::createFromGlobals();
+-
 +$response = _run_app($request);
  $response->send();
 -

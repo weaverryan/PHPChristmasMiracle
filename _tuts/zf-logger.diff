@@ -198,7 +198,7 @@ index 9642f7c..5dfd2c3 100644
      ],
      "packages-dev": [],
 diff --git a/index.php b/index.php
-index 646ee16..919eee1 100644
+index e64fbc5..0add68c 100644
 --- a/index.php
 +++ b/index.php
 @@ -6,11 +6,14 @@ use Symfony\Component\HttpFoundation\Request;
@@ -216,7 +216,7 @@ index 646ee16..919eee1 100644
  
  // Service setup
  $c['connection'] = function(Container $c) {
-@@ -34,6 +37,15 @@ $c['router'] = function() {
+@@ -30,6 +33,15 @@ $c['router'] = function() {
  
      return $router;
  };
@@ -231,10 +231,10 @@ index 646ee16..919eee1 100644
 +};
  
  // run the framework!
- $route = $c['router']->match(
-@@ -49,6 +61,13 @@ if ($route) {
+ $request = Request::createFromGlobals();
+@@ -47,6 +59,13 @@ if ($route) {
  // get the "controller" out, or default to error404_controller
- $controller = $c['request']->attributes->get('controller', 'error404_controller');
+ $controller = $request->attributes->get('controller', 'error404_controller');
  
 +if ($controller == 'error404_controller') {
 +    $msg = sprintf('Controller not found for "%s"', $c['request']->getPathInfo());
@@ -244,5 +244,5 @@ index 646ee16..919eee1 100644
 +}
 +
  // execute the controller and get the response
- $response = call_user_func_array($controller, array($c['request'], $c));
+ $response = call_user_func_array($controller, array($request, $c));
  if (!$response instanceof Response) {
