@@ -1,0 +1,186 @@
+diff --git a/bootstrap.php b/bootstrap.php
+index fa4ccc1..45ebf60 100644
+--- a/bootstrap.php
++++ b/bootstrap.php
+@@ -82,6 +82,13 @@ function _create_container()
+ 
+         return $logger;
+     };
++    $c['twig'] = function() {
++        $loader = new \Twig_Loader_Filesystem(array(
++            __DIR__.'/views'
++        ));
++
++        return new \Twig_Environment($loader);
++    };
+ 
+     return $c;
+ }
+\ No newline at end of file
+diff --git a/composer.json b/composer.json
+index b5634d1..a97c670 100644
+--- a/composer.json
++++ b/composer.json
+@@ -3,6 +3,7 @@
+         "symfony/http-foundation": "~2.5",
+         "aura/router": "~2.1",
+         "pimple/pimple": "~3.0",
+-        "zendframework/zend-log": "~2.3"
++        "zendframework/zend-log": "~2.3",
++        "twig/twig": "~1.0"
+     }
+ }
+diff --git a/composer.lock b/composer.lock
+index 5dfd2c3..fdd8c16 100644
+--- a/composer.lock
++++ b/composer.lock
+@@ -4,7 +4,7 @@
+         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+         "This file is @generated automatically"
+     ],
+-    "hash": "9c896a0d521571be9af54e819eef46e7",
++    "hash": "c5d052620c8f3b93f99c1d889a185545",
+     "packages": [
+         {
+             "name": "aura/router",
+@@ -160,6 +160,63 @@
+             "time": "2014-10-24 05:49:22"
+         },
+         {
++            "name": "twig/twig",
++            "version": "v1.16.2",
++            "source": {
++                "type": "git",
++                "url": "https://github.com/twigphp/Twig.git",
++                "reference": "42f758d9fe2146d1f0470604fc05ee43580873fc"
++            },
++            "dist": {
++                "type": "zip",
++                "url": "https://api.github.com/repos/twigphp/Twig/zipball/42f758d9fe2146d1f0470604fc05ee43580873fc",
++                "reference": "42f758d9fe2146d1f0470604fc05ee43580873fc",
++                "shasum": ""
++            },
++            "require": {
++                "php": ">=5.2.4"
++            },
++            "type": "library",
++            "extra": {
++                "branch-alias": {
++                    "dev-master": "1.16-dev"
++                }
++            },
++            "autoload": {
++                "psr-0": {
++                    "Twig_": "lib/"
++                }
++            },
++            "notification-url": "https://packagist.org/downloads/",
++            "license": [
++                "BSD-3-Clause"
++            ],
++            "authors": [
++                {
++                    "name": "Fabien Potencier",
++                    "email": "fabien@symfony.com",
++                    "homepage": "http://fabien.potencier.org",
++                    "role": "Lead Developer"
++                },
++                {
++                    "name": "Armin Ronacher",
++                    "email": "armin.ronacher@active-4.com",
++                    "role": "Project Founder"
++                },
++                {
++                    "name": "Twig Team",
++                    "homepage": "https://github.com/fabpot/Twig/graphs/contributors",
++                    "role": "Contributors"
++                }
++            ],
++            "description": "Twig, the flexible, fast, and secure template language for PHP",
++            "homepage": "http://twig.sensiolabs.org",
++            "keywords": [
++                "templating"
++            ],
++            "time": "2014-10-17 12:53:44"
++        },
++        {
+             "name": "zendframework/zend-log",
+             "version": "2.3.3",
+             "target-dir": "Zend/Log",
+diff --git a/controllers.php b/controllers.php
+index 9adb562..4de8eb7 100644
+--- a/controllers.php
++++ b/controllers.php
+@@ -8,13 +8,10 @@ use Pimple\Container;
+  * Define our controllers
+  */
+ 
+-function homepage_controller(Request $request) {
+-
+-    $content = '<h1>PHP Camp!</h1>';
+-    $content .= '<a href="/attendees">See the attendees</a>';
+-    if ($name = $request->attributes->get('name')) {
+-        $content .= sprintf('<p>Oh, and hello %s!</p>', $name);
+-    }
++function homepage_controller(Request $request, Container $c) {
++    $content = $c['twig']->render('homepage.twig', array(
++        'name' => $request->attributes->get('name'),
++    ));
+ 
+     return new Response($content);
+ }
+@@ -23,17 +20,11 @@ function attendees_controller(Request $request, Container $c) {
+     $dbh = $c['connection'];
+ 
+     $sql = 'SELECT * FROM php_camp';
+-    $content = '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />';
+-    $content .= '<h1>PHP Camp Attendees</h1>';
+-    $content .= '<table class="table" style="width: 300px;">';
+-    foreach ($dbh->query($sql) as $row) {
+-        $content .= sprintf(
+-            '<tr><td style="font-size: 24px;">%s</td><td><img src="%s" height="120" /></td></tr>',
+-            $row['attendee'],
+-            $row['avatar_url']
+-        );
+-    }
+-    $content .= '</table>';
++    $campers = $dbh->query($sql);
++
++    $content = $c['twig']->render('attendees.twig', array(
++        'campers' => $campers
++    ));
+ 
+     return new Response($content);
+ }
+diff --git a/views/attendees.twig b/views/attendees.twig
+new file mode 100644
+index 0000000..106ec00
+--- /dev/null
++++ b/views/attendees.twig
+@@ -0,0 +1,13 @@
++<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
++
++<h1>PHP Camp Attendees</h1>
++<table class="table" style="width: 300px;">
++    {% for camper in campers %}
++    <tr>
++        <td style="font-size: 24px;">
++            {{ camper.attendee }}
++        </td>
++        <td><img src="{{ camper.avatar_url }}" height="120" /></td>
++    </tr>
++    {% endfor %}
++</table>
+diff --git a/views/homepage.twig b/views/homepage.twig
+new file mode 100644
+index 0000000..fbe632e
+--- /dev/null
++++ b/views/homepage.twig
+@@ -0,0 +1,7 @@
++<h1>PHP Camp!</h1>
++
++<a href="/attendees">See the attendees</a>
++
++{% if name %}
++    <p>Oh, and hello {{ name }}!</p>
++{% endif %}
