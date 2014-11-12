@@ -1,8 +1,8 @@
 diff --git a/bootstrap.php b/bootstrap.php
-index 52faebf..986f2f4 100644
+index 52faebf..fa4ccc1 100644
 --- a/bootstrap.php
 +++ b/bootstrap.php
-@@ -2,3 +2,88 @@
+@@ -2,3 +2,86 @@
  
  require __DIR__.'/vendor/autoload.php';
  
@@ -17,30 +17,36 @@ index 52faebf..986f2f4 100644
 + * *************** Our one-method framework
 + */
 +
-+function _run_app(Container $c) {
++function _run_app(Request $request) {
++    $c = _create_container();
++
++    // include the routing and controllers
++    require_once 'routing.php';
++    require_once 'controllers.php';
++
 +    // run the framework!
 +    $route = $c['router']->match(
-+        $c['request']->getPathInfo(),
-+        $c['request']->server->all()
++        $request->getPathInfo(),
++        $request->server->all()
 +    );
 +
 +    // merge the matched attributes back into Symfony's request
 +    if ($route) {
-+        $c['request']->attributes->add($route->params);
++        $request->attributes->add($route->params);
 +    }
 +
 +    // get the "controller" out, or default to error404_controller
-+    $controller = $c['request']->attributes->get('controller', 'error404_controller');
++    $controller = $request->attributes->get('controller', 'error404_controller');
 +
 +    if ($controller == 'error404_controller') {
-+        $msg = sprintf('Controller not found for "%s"', $c['request']->getPathInfo());
++        $msg = sprintf('Controller not found for "%s"', $request->getPathInfo());
 +        $c['logger']->err($msg);
 +    } else {
 +        $c['logger']->info(sprintf('Found controller "%s"', $controller));
 +    }
 +
 +    // execute the controller and get the response
-+    $response = call_user_func_array($controller, array($c['request'], $c));
++    $response = call_user_func_array($controller, array($request, $c));
 +    if (!$response instanceof Response) {
 +        throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
 +    }
@@ -52,45 +58,38 @@ index 52faebf..986f2f4 100644
 + * *************** Container Setup
 + */
 +
-+$c = new Container();
++function _create_container()
++{
++    $c = new Container();
 +
-+// configuration
-+$c['connection_string'] = 'sqlite:'.__DIR__.'/data/database.sqlite';
-+$c['log_path'] = __DIR__.'/data/web.log';
++    // configuration
++    $c['connection_string'] = 'sqlite:' . __DIR__ . '/data/database.sqlite';
++    $c['log_path'] = __DIR__ . '/data/web.log';
 +
-+// Service setup
-+$c['connection'] = function(Container $c) {
-+    return new PDO($c['connection_string']);
-+};
++    // Service setup
++    $c['connection'] = function (Container $c) {
++        return new PDO($c['connection_string']);
++    };
 +
-+$c['request'] = function() {
-+    return Request::createFromGlobals();
-+};
++    $c['router'] = function () {
++        $routerFactory = new RouterFactory();
++        $router = $routerFactory->newInstance();
 +
-+$c['router'] = function() {
-+    $routerFactory = new RouterFactory();
++        return $router;
++    };
++    $c['logger_writer'] = function (Container $c) {
++        return new Stream($c['log_path']);
++    };
++    $c['logger'] = function (Container $c) {
++        $logger = new Logger();
++        $logger->addWriter($c['logger_writer']);
 +
-+    $router = $routerFactory->newInstance();
++        return $logger;
++    };
 +
-+    // create a router, build the routes, and then execute it
-+    $router->add('attendees_list', '/attendees')
-+        ->addValues(['controller' => 'attendees_controller']);
-+    $router->add('homepage', '{/name}')
-+        ->addValues(['controller' => 'homepage_controller']);
-+
-+    return $router;
-+};
-+$c['logger_writer'] = function(Container $c) {
-+    return new Stream($c['log_path']);
-+};
-+$c['logger'] = function(Container $c) {
-+    $logger = new Logger();
-+    $logger->addWriter($c['logger_writer']);
-+
-+    return $logger;
-+};
-+
-+return $c;
++    return $c;
++}
+\ No newline at end of file
 diff --git a/controllers.php b/controllers.php
 new file mode 100644
 index 0000000..9adb562
@@ -147,15 +146,15 @@ index 0000000..9adb562
 +    return $response;
 +}
 diff --git a/index.php b/index.php
-index 919eee1..dd22794 100644
+index 919eee1..2064c68 100644
 --- a/index.php
 +++ b/index.php
-@@ -1,121 +1,8 @@
+@@ -1,121 +1,9 @@
  <?php
 -require __DIR__.'/bootstrap.php';
  
 -// create a request object to help us
--use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\HttpFoundation\Request;
 -use Symfony\Component\HttpFoundation\Response;
 -use Aura\Router\RouterFactory;
 -use Pimple\Container;
@@ -213,7 +212,7 @@ index 919eee1..dd22794 100644
 -
 -// get the "controller" out, or default to error404_controller
 -$controller = $c['request']->attributes->get('controller', 'error404_controller');
--
+ 
 -if ($controller == 'error404_controller') {
 -    $msg = sprintf('Controller not found for "%s"', $c['request']->getPathInfo());
 -    $c['logger']->err($msg);
@@ -226,11 +225,10 @@ index 919eee1..dd22794 100644
 -if (!$response instanceof Response) {
 -    throw new Exception(sprintf('Your controller "%s" did not return a response!!', $controller));
 -}
-+$c = require __DIR__.'/bootstrap.php';
-+require 'routing.php';
-+require 'controllers.php';
++require __DIR__.'/bootstrap.php';
  
-+$response = _run_app($c);
++$request = Request::createFromGlobals();
++$response = _run_app($request);
  $response->send();
 -
 -/*
