@@ -89,7 +89,7 @@ index 5dfd2c3..fdd8c16 100644
              "version": "2.3.3",
              "target-dir": "Zend/Log",
 diff --git a/controllers.php b/controllers.php
-index 9adb562..4de8eb7 100644
+index 9adb562..b986cd9 100644
 --- a/controllers.php
 +++ b/controllers.php
 @@ -8,13 +8,10 @@ use Pimple\Container;
@@ -110,10 +110,11 @@ index 9adb562..4de8eb7 100644
  
      return new Response($content);
  }
-@@ -23,17 +20,11 @@ function attendees_controller(Request $request, Container $c) {
+@@ -22,25 +19,17 @@ function homepage_controller(Request $request) {
+ function attendees_controller(Request $request, Container $c) {
      $dbh = $c['connection'];
  
-     $sql = 'SELECT * FROM php_camp';
+-    $sql = 'SELECT * FROM php_camp';
 -    $content = '<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />';
 -    $content .= '<h1>PHP Camp Attendees</h1>';
 -    $content .= '<table class="table" style="width: 300px;">';
@@ -125,7 +126,7 @@ index 9adb562..4de8eb7 100644
 -        );
 -    }
 -    $content .= '</table>';
-+    $campers = $dbh->query($sql);
++    $campers = $dbh->query('SELECT * FROM php_camp');
 +
 +    $content = $c['twig']->render('attendees.twig', array(
 +        'campers' => $campers
@@ -133,6 +134,15 @@ index 9adb562..4de8eb7 100644
  
      return new Response($content);
  }
+ 
+-function error404_controller(Request $request) {
+-    $content = '<h1>404 Page not Found</h1>';
+-    $content .= '<p>Find a boy (or girl) scout - they can fix this!</p>';
++function error404_controller(Request $request, Container $c) {
++    $content = $c['twig']->render('error404.twig');
+ 
+     $response = new Response($content);
+     $response->setStatusCode(404);
 diff --git a/services.php b/services.php
 index b0b1542..1a0248d 100644
 --- a/services.php
@@ -169,6 +179,15 @@ index 0000000..106ec00
 +    </tr>
 +    {% endfor %}
 +</table>
+diff --git a/views/error404.twig b/views/error404.twig
+new file mode 100644
+index 0000000..27f565e
+--- /dev/null
++++ b/views/error404.twig
+@@ -0,0 +1,3 @@
++
++<h1>404 Page not Found</h1>
++<p>Find a boy (or girl) scout - they can fix this!</p>
 diff --git a/views/homepage.twig b/views/homepage.twig
 new file mode 100644
 index 0000000..fbe632e
