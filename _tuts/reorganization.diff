@@ -1,27 +1,23 @@
 diff --git a/bootstrap.php b/bootstrap.php
-index 52faebf..fa4ccc1 100644
+index 52faebf..75e25ac 100644
 --- a/bootstrap.php
 +++ b/bootstrap.php
-@@ -2,3 +2,86 @@
+@@ -2,3 +2,46 @@
  
  require __DIR__.'/vendor/autoload.php';
  
-+use Pimple\Container;
 +use Symfony\Component\HttpFoundation\Response;
 +use Symfony\Component\HttpFoundation\Request;
-+use Aura\Router\RouterFactory;
-+use Zend\Log\Writer\Stream;
-+use Zend\Log\Logger;
 +
 +/*
 + * *************** Our one-method framework
 + */
 +
 +function _run_app(Request $request) {
-+    $c = _create_container();
++    $c = require 'services.php';
 +
 +    // include the routing and controllers
-+    require_once 'routing.php';
++    require 'routing.php';
 +    require_once 'controllers.php';
 +
 +    // run the framework!
@@ -53,43 +49,6 @@ index 52faebf..fa4ccc1 100644
 +
 +    return $response;
 +}
-+
-+/*
-+ * *************** Container Setup
-+ */
-+
-+function _create_container()
-+{
-+    $c = new Container();
-+
-+    // configuration
-+    $c['connection_string'] = 'sqlite:' . __DIR__ . '/data/database.sqlite';
-+    $c['log_path'] = __DIR__ . '/data/web.log';
-+
-+    // Service setup
-+    $c['connection'] = function (Container $c) {
-+        return new PDO($c['connection_string']);
-+    };
-+
-+    $c['router'] = function () {
-+        $routerFactory = new RouterFactory();
-+        $router = $routerFactory->newInstance();
-+
-+        return $router;
-+    };
-+    $c['logger_writer'] = function (Container $c) {
-+        return new Stream($c['log_path']);
-+    };
-+    $c['logger'] = function (Container $c) {
-+        $logger = new Logger();
-+        $logger->addWriter($c['logger_writer']);
-+
-+        return $logger;
-+    };
-+
-+    return $c;
-+}
-\ No newline at end of file
 diff --git a/controllers.php b/controllers.php
 new file mode 100644
 index 0000000..9adb562
@@ -289,3 +248,44 @@ index 0000000..2b48429
 +    ->addValues(['controller' => 'attendees_controller']);
 +$router->add('homepage', '{/name}')
 +    ->addValues(['controller' => 'homepage_controller']);
+diff --git a/services.php b/services.php
+new file mode 100644
+index 0000000..b0b1542
+--- /dev/null
++++ b/services.php
+@@ -0,0 +1,35 @@
++<?php
++use Pimple\Container;
++use Aura\Router\RouterFactory;
++use Zend\Log\Writer\Stream;
++use Zend\Log\Logger;
++
++
++$c = new Container();
++
++// configuration
++$c['connection_string'] = 'sqlite:' . __DIR__ . '/data/database.sqlite';
++$c['log_path'] = __DIR__ . '/data/web.log';
++
++// Service setup
++$c['connection'] = function (Container $c) {
++    return new PDO($c['connection_string']);
++};
++
++$c['router'] = function () {
++    $routerFactory = new RouterFactory();
++    $router = $routerFactory->newInstance();
++
++    return $router;
++};
++$c['logger_writer'] = function (Container $c) {
++    return new Stream($c['log_path']);
++};
++$c['logger'] = function (Container $c) {
++    $logger = new Logger();
++    $logger->addWriter($c['logger_writer']);
++
++    return $logger;
++};
++
++return $c;
